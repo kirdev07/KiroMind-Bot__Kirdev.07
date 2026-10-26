@@ -40,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.preferencesDataStore
 import com.kirdev.kiromindbot.core.service.BotService
@@ -140,6 +141,14 @@ class AppGraph private constructor(context: Context) {
     }
 
     private val engine = FuzzyMindCore()
+
+    // Rebuild the search index in the background whenever the base changes, so a message never
+    // waits for it (~1.5 s for 15k answers on a mid-range phone). collectLatest drops stale builds.
+    init {
+        scope.launch(kotlinx.coroutines.Dispatchers.Default) {
+            answers.entries.collectLatest { engine.indexFor(it) }
+        }
+    }
     private val secrets = KeystoreSecretStore(context)
     /** Routes to the provider selected in settings (Gemini, Claude, YandexGPT or OpenAI-compatible). */
     val ai = AiRouter(secrets) { settings.preferences.value }

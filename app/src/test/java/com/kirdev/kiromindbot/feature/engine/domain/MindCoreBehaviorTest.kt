@@ -98,3 +98,15 @@ class MindCoreBehaviorTest {
         assertTrue("query took $perQueryMs ms", perQueryMs < 150)
     }
 }
+
+class IndexCacheTest {
+    @Test fun indexIsReusedForTheSameBaseAndRebuiltForANewOne() {
+        val engine = FuzzyMindCore()
+        val base = listOf(AnswerEntry(1, "привет", "Привет!"))
+        val first = engine.indexFor(base)
+        assertSame(first, engine.indexFor(base))
+        engine.resolve("привет", base)
+        assertSame("resolve must use the prebuilt index", first, engine.indexFor(base))
+        assertNotSame(first, engine.indexFor(base + AnswerEntry(2, "пока", "Пока!")))
+    }
+}
