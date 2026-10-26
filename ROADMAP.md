@@ -28,6 +28,8 @@
 ## Alpha 5 — external AI, privacy and quality
 - [x] Claude provider (official Anthropic SDK): Keystore key, per-minute and daily limits, opt-in context sharing. Gemini, YandexGPT and OpenAI-compatible (Groq/OpenRouter/OpenAI/self-hosted) via one router. GigaChat is intentionally not included (owner decision).
 - [x] Anti-spam (flood/repeat, optional auto-block), persistent blacklist, owner commands. Journal export from the terminal.
-- [ ] Smoke test Android 10–17, architecture cleanup, release signing, licensing review.
+- [x] Supported: Android 10 and newer (minSdk 29, targetSdk 36). Tested on a Xiaomi M2102J20SG phone (Android 12); a separate check on every version is not planned (owner decision).
+- [x] Release signing (v1.0.0).
+- [ ] Architecture cleanup, licensing review.
 
 Do not claim Alpha 1 is a working production Telegram bot.

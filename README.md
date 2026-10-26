@@ -9,7 +9,7 @@ An independent Android project created **from zero**. New brand, application ID,
 - Internal answer engine: **MindCore** (not Kiro Brain)
 - Application ID: `com.kirdev.kiromindbot` (new install; not an in-place update of old Kiro Bot)
 - UI: Kotlin, Jetpack Compose, Material 3, AMOLED Black, five bottom tabs.
-- Minimum Android: API 29 (Android 10), compile API 37, target API 36.
+- Supported: **Android 10 and newer** (minimum API 29, compile API 37, target API 36). Tested on Android 12.
 
 ## What's implemented
 
