@@ -1,42 +1,62 @@
-# KiroMind Bot 1.0 — Fusion Minimal
+# KiroMind Bot
 
-An independent Android project created **from zero**. New brand, application ID, file structure and engine contract. **No Kiro Bot 3.0 files, VK-era bot code or answer database have been copied.**
+Telegram-бот, который работает прямо на Android-телефоне. Отвечает по своей базе с помощью собственного движка **MindCore**: понимает опечатки и разные формулировки, помнит контекст разговора и говорит в выбранном характере. Если ответа в базе нет, может спросить внешний ИИ.
 
-## Identity
+Автор — **Kirdev**. Лицензия — Apache 2.0.
 
-- Product: **KiroMind Bot**
-- Initial product version: **1.0** (UI Alpha 1; not a production release)
-- Internal answer engine: **MindCore** (not Kiro Brain)
-- Application ID: `com.kirdev.kiromindbot` (new install; not an in-place update of old Kiro Bot)
-- UI: Kotlin, Jetpack Compose, Material 3, AMOLED Black, five bottom tabs.
-- Supported: **Android 10 and newer** (minimum API 29, compile API 37, target API 36). Tested on Android 12.
+<p align="center">
+  <img src="docs/screenshots/home.png" width="19%" alt="Главная">
+  <img src="docs/screenshots/terminal.png" width="19%" alt="Терминал">
+  <img src="docs/screenshots/base.png" width="19%" alt="База ответов">
+  <img src="docs/screenshots/ai.png" width="19%" alt="MindCore и ИИ">
+  <img src="docs/screenshots/settings.png" width="19%" alt="Настройки">
+</p>
 
-## What's implemented
+## Возможности
 
-1. Home: status, demonstration-only circular power button, system overview, mini-terminal.
-2. Terminal: events, filters and search. Not connected to a real bot.
-3. Answers: searchable repository, favorite replies, editor; simulated media and HTTPS reference entry.
-4. MindCore: brand-new pure Kotlin `MindCore` interface, an **exact-match** engine, test chat with real deterministic matching against current demo answers.
-5. Settings: seven nested screens with in-memory UI toggles.
+- **MindCore.** Ищет похожий вопрос, а не точное совпадение: «приветт», «слушай, а как дела, бот?» и «чё как» поймёт правильно. Помнит последние реплики, поэтому может продолжить диалог.
+- **Встроенная база на 30 000 вопросов.** 106 тем: приветствия, настроение, болтовня, шутки и факты, советы по фильмам, книгам и играм, рассказ о себе и о разработчике. Ставится при первом запуске и не трогает ваши собственные ответы.
+- **Характеры.** Обычный, дружелюбный, вежливый, дерзкий (может материться) и «Авто», который чередует первые три.
+- **Своя база ответов.** Несколько вариантов на один вопрос, фото, видео, голосовые и файлы, продолжения диалога, категории и исключения.
+- **«Без ответа».** Вопросы, на которые бот не нашёл ответа, собираются в список, их можно сразу научить. Владелец может учить и прямо из Telegram: `/teach вопрос = ответ`.
+- **Внешний ИИ.** Gemini, Claude, YandexGPT или OpenAI-совместимый сервис (Groq, OpenRouter и др.), с дневным лимитом и лимитом в минуту.
+- **Защита.** Антиспам, автоблокировка, чёрный список, команды владельца `/block`, `/unblock`, `/blocked`, `/stop`.
+- **Группы.** Бот отвечает на упоминание, ответ на своё сообщение или обращение вида «Бот, …».
+- **Данные.** Экспорт и импорт базы (`.kmbackup.json`), автоматические резервные копии, журнал событий с экспортом.
+- **Самообновление.** Приложение само находит новый релиз на GitHub, сверяет подпись и SHA-256 и предлагает установить.
 
-**No real Telegram connection, API key handling, binary media loading, database persistence, imported legacy answers, AI API, notifications, or background service yet.** No `INTERNET` or privileged permissions requested.
+## Установка
 
-## Open in Android Studio
+1. Скачайте последний `KiroMind-Bot-x.y.z.apk` в разделе [Releases](https://github.com/kirdev07/KiroMind-Bot__Kirdev.07/releases).
+2. Установите APK и разрешите установку из этого источника, если Android спросит.
+3. Дальнейшие обновления приложение предложит само (Настройки → Приложение → Обновления).
 
-1. Use recent Android Studio compatible with Android Gradle Plugin 9.2.0.
-2. Select **Open** → the project folder.
-3. Install JDK 17 and Android SDK Platform 37 via SDK Manager if needed.
-4. Open the Gradle project and Sync. Gradle version required: **9.4.1**.
-5. **Build note:** This ZIP does not bundle a `gradle-wrapper.jar` binary; download/generate the official Gradle Wrapper using a trusted local Gradle 9.4.1 installation (`gradle wrapper --gradle-version 9.4.1`) before running `./gradlew`, or configure the matching local Gradle distribution in Android Studio. Do not use a random wrapper JAR from the internet.
-6. After Sync, build `app` and run on an emulator or a device with Android 10+.
+Нужен **Android 10 или новее**. Проверено на Android 12.
 
-> Build not verified in this environment because Android SDK/Gradle are not installed. Run Gradle Sync/Build in Android Studio, then send any build errors for adjustment.
+## Первый запуск
 
-## Design and architecture
+1. Создайте бота у [@BotFather](https://t.me/BotFather) и скопируйте токен.
+2. В приложении: **Настройки → Telegram**. Вставьте токен и укажите свой Telegram ID в поле «ID владельцев через запятую».
+3. Нажмите кнопку питания на главном экране. Бот работает, пока он включён: в шторке будет уведомление.
+4. Напишите боту в Telegram. Ответы можно проверить и без Telegram: **ИИ → Тестировать ответы**.
 
-- `ARCHITECTURE.md`: responsibilities and full package map.
-- `DESIGN_SPEC.md`: screen and component rules.
-- `ROADMAP.md`: staged feature development.
-- `AGENTS.md`: instructions for Claude Code/Codex.
+На телефонах Xiaomi (MIUI) разрешите приложению автозапуск и работу в фоне. Иначе система может остановить бота.
 
-All state in UI Alpha is temporary and can be reset when the process exits. Do not treat it as persistent settings or a production bot.
+## Безопасность
+
+- Токен Telegram и ключи ИИ хранятся в зашифрованном хранилище Android (Keystore). Если расшифровать не получилось, бот просто не запускается: ключ никогда не сохраняется открытым текстом.
+- В журнал не попадают тексты сообщений, токены и ID. В резервные копии не входят токены и ключи.
+- Текст вопроса уходит внешнему ИИ, только если вы сами его включили.
+
+## Для разработчиков
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — устройство проекта и MindCore.
+- [docs/RELEASING.md](docs/RELEASING.md) — как выпускаются и подписываются релизы.
+- [tools/basegen](tools/basegen) — исходник встроенной базы (`topics.txt`) и генератор.
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — лицензии библиотек.
+
+Kotlin, Jetpack Compose, Room, DataStore, Telegram Bot API.
+
+## Лицензия
+
+Apache License 2.0, см. [LICENSE](LICENSE) и [NOTICE](NOTICE).
