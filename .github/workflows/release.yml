@@ -28,12 +28,13 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # The runner image already contains the Android SDK; only platform 37 is added.
-      - name: Install SDK platform
+      # The runner image ships the Android SDK. Only the licenses are accepted here;
+      # the Android Gradle plugin downloads the exact compile platform it needs.
+      - name: Accept SDK licenses
         run: |
-          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          SDKM=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | head -n1)
+          echo "Using $SDKM"
           yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" "platforms;android-37"
 
       - name: Make wrapper executable
         run: chmod +x gradlew
