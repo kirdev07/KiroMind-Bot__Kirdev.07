@@ -1,0 +1,339 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "922dec64e5b8d11d06f1fd4531145411",
+    "entities": [
+      {
+        "tableName": "answers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `question` TEXT NOT NULL, `reply` TEXT NOT NULL, `favorite` INTEGER NOT NULL, `after_entry_id` INTEGER, `position` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "question",
+            "columnName": "question",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reply",
+            "columnName": "reply",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favorite",
+            "columnName": "favorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "afterEntryId",
+            "columnName": "after_entry_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "reply_variants",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `answer_id` INTEGER NOT NULL, `text` TEXT NOT NULL, `style` TEXT NOT NULL, `weight` INTEGER NOT NULL, `position` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`answer_id`) REFERENCES `answers`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answerId",
+            "columnName": "answer_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "style",
+            "columnName": "style",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weight",
+            "columnName": "weight",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_reply_variants_answer_id",
+            "unique": false,
+            "columnNames": [
+              "answer_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_reply_variants_answer_id` ON `${TABLE_NAME}` (`answer_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "answers",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "answer_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "answer_media",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `answer_id` INTEGER NOT NULL, `variant_id` TEXT, `kind` TEXT NOT NULL, `display_name` TEXT NOT NULL, `source` TEXT NOT NULL, `mime_type` TEXT, `send_order` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`answer_id`) REFERENCES `answers`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answerId",
+            "columnName": "answer_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "variantId",
+            "columnName": "variant_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "display_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mime_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sendOrder",
+            "columnName": "send_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_answer_media_answer_id",
+            "unique": false,
+            "columnNames": [
+              "answer_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_answer_media_answer_id` ON `${TABLE_NAME}` (`answer_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "answers",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "answer_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "unknown_questions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `sample` TEXT NOT NULL, `count` INTEGER NOT NULL, `first_seen` INTEGER NOT NULL, `last_seen` INTEGER NOT NULL, PRIMARY KEY(`key`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sample",
+            "columnName": "sample",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstSeen",
+            "columnName": "first_seen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSeen",
+            "columnName": "last_seen",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_unknown_questions_last_seen",
+            "unique": false,
+            "columnNames": [
+              "last_seen"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_unknown_questions_last_seen` ON `${TABLE_NAME}` (`last_seen`)"
+          }
+        ]
+      },
+      {
+        "tableName": "telegram_file_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source` TEXT NOT NULL, `method` TEXT NOT NULL, `file_id` TEXT NOT NULL, `cached_at` INTEGER NOT NULL, PRIMARY KEY(`source`, `method`))",
+        "fields": [
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "method",
+            "columnName": "method",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fileId",
+            "columnName": "file_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cachedAt",
+            "columnName": "cached_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "source",
+            "method"
+          ]
+        }
+      },
+      {
+        "tableName": "blocked_users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` INTEGER NOT NULL, `reason` TEXT NOT NULL, `blocked_at` INTEGER NOT NULL, `until` INTEGER, PRIMARY KEY(`user_id`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blockedAt",
+            "columnName": "blocked_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "until",
+            "columnName": "until",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "user_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '922dec64e5b8d11d06f1fd4531145411')"
+    ]
+  }
+}

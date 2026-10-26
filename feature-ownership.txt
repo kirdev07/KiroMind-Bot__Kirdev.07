@@ -1,0 +1,3 @@
+New KiroMind Bot 1.0 project created independently for the user.
+Legacy application and source repositories were not modified or copied.
+A LICENSE for public distribution must be selected and verified before publication.
