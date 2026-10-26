@@ -46,9 +46,18 @@ jobs:
       - name: Restore keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KIROMIND_KEYSTORE_BASE64 }}
+          STORE_PW: ${{ secrets.KIROMIND_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.KIROMIND_KEY_ALIAS }}
+          KEY_PW: ${{ secrets.KIROMIND_KEY_PASSWORD }}
+        # ::error:: lines appear as annotations; they name the problem, never a secret's value.
         run: |
-          test -n "$KEYSTORE_BASE64" || { echo "KIROMIND_KEYSTORE_BASE64 secret is missing"; exit 1; }
-          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          for name in KEYSTORE_BASE64 STORE_PW ALIAS KEY_PW; do
+            [ -n "${!name}" ] || { echo "::error::secret for $name is empty or not set (check the exact secret name)"; exit 1; }
+          done
+          # Pasting into the web form can add spaces or line breaks; base64 never contains them.
+          printf '%s' "$KEYSTORE_BASE64" | tr -d ' 
+	' | base64 -d > "$RUNNER_TEMP/release.jks"             || { echo "::error::KIROMIND_KEYSTORE_BASE64 is not valid base64 (length ${#KEYSTORE_BASE64})"; exit 1; }
+          keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$STORE_PW" -alias "$ALIAS" > /dev/null 2>&1             || { echo "::error::keystore opened, but password or alias does not match"; exit 1; }
 
       - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest -PappVersion=${{ steps.v.outputs.version }}
