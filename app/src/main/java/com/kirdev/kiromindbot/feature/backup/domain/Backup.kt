@@ -26,6 +26,8 @@ object BackupFormat {
     private const val MAX_TEXT = 4_096
     private const val MAX_VARIANTS = 50
     private const val MAX_MEDIA = 20
+    private const val MAX_CATEGORY = 40
+    private const val MAX_EXCLUSIONS = 50
 
     fun encode(entries: List<AnswerEntry>, appVersion: String, exportedAtMillis: Long): String {
         val answers = JSONArray()
@@ -36,6 +38,8 @@ object BackupFormat {
                 .put("reply", e.reply)
                 .put("favorite", e.favorite)
                 .apply { e.afterEntryId?.let { put("afterEntryId", it) } }
+                .apply { if (e.category.isNotBlank()) put("category", e.category) }
+                .apply { if (e.exclusions.isNotEmpty()) put("exclusions", JSONArray(e.exclusions)) }
                 .put("media", mediaJson(e.media))
                 .put("variants", JSONArray().apply {
                     e.alternatives.forEach { v ->
@@ -107,7 +111,11 @@ object BackupFormat {
                     weight = v.optInt("weight", 1).coerceIn(1, 10)
                 ).takeIf { it.isUsable }
             },
-            afterEntryId = if (o.has("afterEntryId")) o.getLong("afterEntryId") else null
+            afterEntryId = if (o.has("afterEntryId")) o.getLong("afterEntryId") else null,
+            category = o.optString("category").trim().take(MAX_CATEGORY),
+            exclusions = o.optJSONArray("exclusions")?.let { arr ->
+                (0 until minOf(arr.length(), MAX_EXCLUSIONS)).mapNotNull { arr.optString(it).trim().take(MAX_TEXT).ifEmpty { null } }
+            }.orEmpty()
         )
     }
 

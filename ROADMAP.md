@@ -14,7 +14,7 @@
 
 ## Alpha 3 — MindCore engine
 - [x] Independent normalization/tokenization, scoring and threshold tests (`FuzzyMindCore`, clean-room).
-- [x] Variant selection, styles/persona, follow-up context, repeat prevention, unknown-question queue, message pipeline. (Categories/exclusions — later.)
+- [x] Variant selection, styles/persona, follow-up context, repeat prevention, unknown-question queue, message pipeline. Categories (grouping and base filter) and exclusion phrases (whole-word, block an answer).
 - [x] 20k synthetic benchmark in unit tests: ~5 ms/query on desktop JVM (memory not yet measured).
 
 ## Alpha 4 — Telegram transport

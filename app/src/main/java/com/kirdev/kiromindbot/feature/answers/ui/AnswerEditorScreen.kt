@@ -1,6 +1,7 @@
 package com.kirdev.kiromindbot.feature.answers.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -71,6 +72,8 @@ fun AnswerEditorScreen(
         }
     }
     var afterId by remember(existing?.id) { mutableStateOf(existing?.afterEntryId) }
+    var category by remember(existing?.id) { mutableStateOf(existing?.category.orEmpty()) }
+    var exclusions by remember(existing?.id) { mutableStateOf(existing?.exclusions.orEmpty().joinToString("\n")) }
     var showPreview by remember { mutableStateOf(false) }
     val valid = question.isNotBlank() && (reply.isNotBlank() || media.isNotEmpty() || variants.any { it.toVariant().isUsable })
 
@@ -87,6 +90,16 @@ fun AnswerEditorScreen(
             OutlinedTextField(value = question, onValueChange = { question = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Вопрос или фраза") }, minLines = 2, maxLines = 4)
 
             FollowUpPicker(entryId, afterId, allAnswers) { afterId = it }
+
+            OutlinedTextField(value = category, onValueChange = { category = it.take(40) }, modifier = Modifier.fillMaxWidth(),
+                label = { Text("Категория") }, singleLine = true, supportingText = { Text("Для группировки в базе, на подбор не влияет") })
+            val known = allAnswers.map { it.category }.filter { it.isNotBlank() && it != category }.distinct().take(8)
+            if (known.isNotEmpty()) Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                known.forEach { c -> AssistChip(onClick = { category = c }, label = { Text(c) }) }
+            }
+            OutlinedTextField(value = exclusions, onValueChange = { exclusions = it }, modifier = Modifier.fillMaxWidth(),
+                label = { Text("Исключения") }, minLines = 2, maxLines = 5,
+                supportingText = { Text("По одной фразе в строке. Если сообщение содержит её целыми словами, этот ответ не сработает") })
 
             Label("Основной ответ · обычный стиль")
             OutlinedTextField(value = reply, onValueChange = { reply = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Ответ бота") }, minLines = 3, maxLines = 6, supportingText = { Text("Может быть пустым, если есть вложения или другие варианты") })
@@ -144,7 +157,9 @@ fun AnswerEditorScreen(
                     reply = reply.trim(),
                     media = media.toList(),
                     alternatives = variants.map { it.toVariant() }.filter { it.isUsable },
-                    afterEntryId = afterId
+                    afterEntryId = afterId,
+                    category = category.trim(),
+                    exclusions = exclusions.lines().map { it.trim() }.filter { it.isNotEmpty() }
                 ))
             },
             enabled = valid,

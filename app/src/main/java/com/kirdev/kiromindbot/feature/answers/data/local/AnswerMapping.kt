@@ -14,7 +14,7 @@ fun AnswerEntry.toRows(position: Int): AnswerRows {
         MediaEntity(m.id, id, variantId, m.kind.name, m.displayName, m.source, m.mimeType, i)
     }
     return AnswerRows(
-        AnswerEntity(id, question, reply, favorite, afterEntryId, position),
+        AnswerEntity(id, question, reply, favorite, afterEntryId, position, category.trim(), exclusions.map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\n")),
         alternatives.mapIndexed { i, v -> VariantEntity(v.id, id, v.text, v.style.name, v.weight, i) },
         mediaRows(media, null) + alternatives.flatMap { mediaRows(it.media, it.id) }
     )
@@ -44,7 +44,9 @@ fun assemble(answers: List<AnswerEntity>, variants: List<VariantEntity>, media: 
                 ReplyVariant(v.id, v.text, mediaOf(a.id, v.id),
                     ReplyStyle.entries.firstOrNull { it.name == v.style } ?: ReplyStyle.NEUTRAL, v.weight)
             },
-            afterEntryId = a.afterEntryId
+            afterEntryId = a.afterEntryId,
+            category = a.category,
+            exclusions = a.exclusions.split('\n').map { it.trim() }.filter { it.isNotEmpty() }
         )
     }
 }

@@ -127,6 +127,18 @@ class StorageTest {
         assertTrue(runBlocking { db.blockedUsers().all() }.isEmpty())
     }
 
+    @Test fun migration3To4AddsCategoryAndExclusions() {
+        migrations.createDatabase(dbName, 3).apply {
+            execSQL("INSERT INTO answers (id, question, reply, favorite, after_entry_id, position) VALUES (5, 'кот', 'Мяу', 0, NULL, 0)")
+            close()
+        }
+        migrations.runMigrationsAndValidate(dbName, 4, true, KiroMindDatabase.MIGRATION_3_4).close()
+        val row = runBlocking { open().answers().answers() }.single()
+        assertEquals("кот", row.question)
+        assertEquals("", row.category)
+        assertEquals("", row.exclusions)
+    }
+
     @Test fun blacklistSurvivesReopen() {
         val db = open()
         val list = com.kirdev.kiromindbot.feature.protection.data.RoomBlacklist(db.blockedUsers(), scope)

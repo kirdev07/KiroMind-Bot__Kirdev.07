@@ -23,9 +23,12 @@ fun AnswersScreen(answers: List<AnswerEntry>, unknownCount: Int, onEdit: (Long)-
     var search by remember { mutableStateOf("") }
     var filter by remember { mutableStateOf("Все") }
     val filtered = answers.filter { entry ->
-        (filter == "Все" || filter == "С медиа" && entry.media.isNotEmpty() || filter == "Избранное" && entry.favorite) &&
+        (filter == "Все" || filter == "С медиа" && entry.media.isNotEmpty() || filter == "Избранное" && entry.favorite || entry.category.isNotBlank() && filter == entry.category) &&
             (entry.question.contains(search, ignoreCase = true) || entry.reply.contains(search, ignoreCase = true) || entry.media.any { it.displayName.contains(search, ignoreCase = true) })
     }
+    val categories = remember(answers) { answers.map { it.category }.filter { it.isNotBlank() }.distinct().sorted() }
+    // A category that no longer exists falls back to "Все".
+    LaunchedEffect(categories) { if (filter !in listOf("Все", "С медиа", "Избранное") && filter !in categories) filter = "Все" }
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TitleBlock("База ответов", "${answers.size} записей · сохраняются на устройстве", action = {
             FilledIconButton(onClick = onAdd) { Icon(Icons.Outlined.Add, contentDescription = "Создать ответ") }
@@ -36,8 +39,8 @@ fun AnswersScreen(answers: List<AnswerEntry>, unknownCount: Int, onEdit: (Long)-
             }
         }
         OutlinedTextField(value = search, onValueChange = { search = it }, modifier = Modifier.fillMaxWidth(), singleLine = true, placeholder = { Text("Поиск по базе и медиа") }, leadingIcon = { Icon(Icons.Outlined.Search, null) })
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("Все", "С медиа", "Избранное").forEach { item ->
+        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            (listOf("Все", "С медиа", "Избранное") + categories).forEach { item ->
                 FilterChip(selected = filter == item, onClick = { filter = item }, label = { Text(item) })
             }
         }
@@ -53,7 +56,9 @@ fun AnswersScreen(answers: List<AnswerEntry>, unknownCount: Int, onEdit: (Long)-
                             if (entry.reply.isNotBlank()) Text(entry.reply, color = AppMuted, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             val extras = listOfNotNull(
                                 entry.alternatives.size.takeIf { it > 0 }?.let { "+$it вар." },
-                                entry.afterEntryId?.let { "↳ после #$it" }
+                                entry.afterEntryId?.let { "↳ после #$it" },
+                                entry.category.takeIf { it.isNotBlank() },
+                                entry.exclusions.size.takeIf { it > 0 }?.let { "искл.: $it" }
                             )
                             if (extras.isNotEmpty()) Text(extras.joinToString(" · "), color = AppMuted, style = MaterialTheme.typography.labelSmall)
                             if (entry.media.isNotEmpty()) {

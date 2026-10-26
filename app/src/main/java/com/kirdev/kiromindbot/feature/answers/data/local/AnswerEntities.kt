@@ -16,7 +16,10 @@ data class AnswerEntity(
     /** Follow-up link; not a foreign key so deleting the parent keeps the child editable. */
     @ColumnInfo(name = "after_entry_id") val afterEntryId: Long?,
     /** Display order in the base list (0 = top). */
-    val position: Int
+    val position: Int,
+    @ColumnInfo(defaultValue = "") val category: String = "",
+    /** Exclusion phrases, one per line. */
+    @ColumnInfo(defaultValue = "") val exclusions: String = ""
 )
 
 @Entity(

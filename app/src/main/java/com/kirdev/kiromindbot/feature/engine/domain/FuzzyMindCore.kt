@@ -41,7 +41,12 @@ class FuzzyMindCore(
         val phrase = TextNormalizer.normalize(incoming)
         if (phrase.isEmpty()) return MatchResult.NotFound("пустая фраза")
         val index = indexFor(entries)
-        fun eligible(e: AnswerEntry) = e.afterEntryId == null || e.afterEntryId == context.previousEntryId
+        val padded = " $phrase "
+        fun excluded(e: AnswerEntry) = e.exclusions.any { x ->
+            val n = TextNormalizer.normalize(x)
+            n.isNotEmpty() && padded.contains(" $n ")
+        }
+        fun eligible(e: AnswerEntry) = (e.afterEntryId == null || e.afterEntryId == context.previousEntryId) && !excluded(e)
         fun strategy(e: AnswerEntry, base: String) = if (e.afterEntryId != null) "context-$base" else base
 
         val exact = index.exact(phrase).filter { eligible(it.entry) }

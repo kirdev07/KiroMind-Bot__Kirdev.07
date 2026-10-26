@@ -42,7 +42,11 @@ data class AnswerEntry(
     val media: List<AnswerMedia> = emptyList(),
     val favorite: Boolean = false,
     val alternatives: List<ReplyVariant> = emptyList(),
-    val afterEntryId: Long? = null
+    val afterEntryId: Long? = null,
+    /** Free-form topic for grouping in the base ("" = none). Does not affect matching. */
+    val category: String = "",
+    /** Phrases that block this answer: if the message contains one as whole words, MindCore skips it. */
+    val exclusions: List<String> = emptyList()
 ) {
     val variants: List<ReplyVariant>
         get() = listOf(ReplyVariant("$id:0", reply, media)) + alternatives

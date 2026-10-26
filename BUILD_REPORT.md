@@ -189,3 +189,9 @@ Xiaomi Poco X3 Pro (M2102J20SG), Android 12, 1080×2400.
 ## «Без ответа» queue (2026-10-27)
 - Search by normalized text (case, ё and punctuation are ignored), «Новые»/«Частые» sorting, item selection and bulk hide with a confirmation dialog.
 - Unit tests: 135/135. On the phone: sorting, search («PLA» → 2 questions) and select all → confirmation dialog → cancel all work; no data was deleted.
+
+## Categories and exclusions (2026-10-27)
+- `AnswerEntry.category` groups answers; the base screen gets a filter chip for each category. Matching ignores the category.
+- `AnswerEntry.exclusions`: if the normalized message contains a phrase as whole words, MindCore skips that answer (exact and fuzzy). «пока» does not match inside «показать».
+- Room v4: `MIGRATION_3_4` adds two columns with `DEFAULT ''`. The schema is exported to `4.json`. The backup format stays compatible: the fields are optional.
+- Unit tests: 142/142. On the phone, StorageTest passed 7/7 (including migration 3→4). The real database (8 entries) survived the update. The editor shows the new fields.

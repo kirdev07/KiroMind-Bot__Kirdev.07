@@ -34,7 +34,7 @@ abstract class KiroMindDatabase : RoomDatabase() {
     abstract fun blockedUsers(): BlockedUserDao
 
     companion object {
-        const val VERSION = 3
+        const val VERSION = 4
         const val NAME = "kiromind.db"
 
         /** v2: cache of Telegram file_ids for uploaded local files. Existing data is untouched. */
@@ -59,8 +59,15 @@ abstract class KiroMindDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `answers` ADD COLUMN `category` TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE `answers` ADD COLUMN `exclusions` TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         /** Every schema version needs an explicit step here. */
-        val MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+        val MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
 
         fun create(context: Context): KiroMindDatabase =
             Room.databaseBuilder(context.applicationContext, KiroMindDatabase::class.java, NAME)
