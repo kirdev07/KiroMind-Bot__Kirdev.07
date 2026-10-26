@@ -55,9 +55,12 @@ jobs:
             [ -n "${!name}" ] || { echo "::error::secret for $name is empty or not set (check the exact secret name)"; exit 1; }
           done
           # Pasting into the web form can add spaces or line breaks; base64 never contains them.
-          printf '%s' "$KEYSTORE_BASE64" | tr -d ' 
-	' | base64 -d > "$RUNNER_TEMP/release.jks"             || { echo "::error::KIROMIND_KEYSTORE_BASE64 is not valid base64 (length ${#KEYSTORE_BASE64})"; exit 1; }
-          keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$STORE_PW" -alias "$ALIAS" > /dev/null 2>&1             || { echo "::error::keystore opened, but password or alias does not match"; exit 1; }
+          if ! printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d > "$RUNNER_TEMP/release.jks"; then
+            echo "::error::KIROMIND_KEYSTORE_BASE64 is not valid base64 (length ${#KEYSTORE_BASE64})"; exit 1
+          fi
+          if ! keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$STORE_PW" -alias "$ALIAS" > /dev/null 2>&1; then
+            echo "::error::keystore decoded, but the password or alias does not match"; exit 1
+          fi
 
       - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest -PappVersion=${{ steps.v.outputs.version }}
