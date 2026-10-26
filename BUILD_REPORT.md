@@ -195,3 +195,11 @@ Xiaomi Poco X3 Pro (M2102J20SG), Android 12, 1080×2400.
 - `AnswerEntry.exclusions`: if the normalized message contains a phrase as whole words, MindCore skips that answer (exact and fuzzy). «пока» does not match inside «показать».
 - Room v4: `MIGRATION_3_4` adds two columns with `DEFAULT ''`. The schema is exported to `4.json`. The backup format stays compatible: the fields are optional.
 - Unit tests: 142/142. On the phone, StorageTest passed 7/7 (including migration 3→4). The real database (8 entries) survived the update. The editor shows the new fields.
+
+## MindCore memory on the phone (2026-10-27)
+| Base | Index build | Index memory | Avg query | p95 | Max |
+|---|---|---|---|---|---|
+| 15,000 | 1.7 s | 6.6 MB | 7.1 ms | 21.3 ms | 29.0 ms |
+| 30,000 | 2.2 s | 13.4 MB | 8.7 ms | 29.8 ms | 47.7 ms |
+
+Memory grows linearly, about 0.45 KB per entry. At 30k that is well within the heap of a typical phone. The index is built in the background.
