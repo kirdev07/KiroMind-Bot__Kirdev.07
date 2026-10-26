@@ -5,8 +5,6 @@ import com.kirdev.kiromindbot.feature.answers.domain.AnswerMedia
 import com.kirdev.kiromindbot.feature.answers.domain.MediaKind
 import com.kirdev.kiromindbot.feature.answers.domain.ReplyStyle
 import com.kirdev.kiromindbot.feature.answers.domain.ReplyVariant
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 /** Demo base inserted once into an empty database on first launch. All media are demo placeholders. */
 object DemoAnswers {
@@ -26,18 +24,4 @@ object DemoAnswers {
         AnswerEntry(7, "Тоже хорошо", "Рад слышать! Чем займёмся?", afterEntryId = 6),
         AnswerEntry(8, "Плохо", "Сочувствую. Хочешь рассказать?", afterEntryId = 6)
     )
-}
-
-/** Deliberately ephemeral. Replace with Room-backed repository, not with a legacy archive parser. */
-class DemoAnswerRepository : AnswerRepository {
-    private val items = MutableStateFlow(DemoAnswers.seed)
-    override val entries: StateFlow<List<AnswerEntry>> = items
-    override fun upsert(answer: AnswerEntry) {
-        require(answer.isValid)
-        items.value = if (items.value.any { it.id == answer.id }) items.value.map { if (it.id == answer.id) answer else it } else listOf(answer) + items.value
-    }
-    override fun toggleFavorite(id: Long) { items.value = items.value.map { if (it.id == id) it.copy(favorite = !it.favorite) else it } }
-    override fun remove(id: Long) { items.value = items.value.filterNot { it.id == id } }
-    override fun find(id: Long): AnswerEntry? = items.value.firstOrNull { it.id == id }
-    override fun replaceAll(entries: List<AnswerEntry>) { items.value = entries.filter { it.isValid } }
 }

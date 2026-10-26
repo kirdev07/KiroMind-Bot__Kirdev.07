@@ -6,46 +6,47 @@ app/src/main/java/com/kirdev/kiromindbot/
 ├── core/
 │   ├── designsystem/       # Material 3 + AMOLED tokens
 │   ├── navigation/         # routes, bottom navigation, nested screens
-│   ├── ui/                 # reusable UI components
-│   └── state/              # isolated temporary UI Alpha session
+│   ├── ui/                 # reusable UI components (SettingRow, SwitchRow, Panel…)
+│   ├── di/                 # AppGraph: app-lifetime singletons and wiring
+│   ├── database/           # KiroMindDatabase (Room v4) and migrations
+│   ├── service/            # BotService (foreground, specialUse) and alerts
+│   └── state/              # BotSession: on/off state and the terminal journal
 └── feature/
     ├── home/ui/            # dashboard and circular power button
-    ├── terminal/
-    │   ├── domain/         # typed events
-    │   └── ui/             # filterable monitor
-    ├── answers/
-    │   ├── domain/         # AnswerEntry, AnswerMedia, MediaKind
-    │   ├── data/           # AnswerRepository, disposable demo adapter
-    │   └── ui/             # answers list, media-aware editor
-    ├── engine/
-    │   ├── domain/         # MindCore, MatchResult, independent resolver
-    │   └── ui/             # engine controls and test chat
-    ├── settings/
-    │   ├── domain/         # AppPreferences
-    │   └── ui/             # root and seven nested sections
-    ├── telegram/api/       # TelegramGateway contract, no implementation
-    └── security/           # SecretStore contract, no implementation
+    ├── terminal/           # typed events, filterable monitor, journal export
+    ├── answers/            # AnswerEntry (variants, media, category, exclusions), Room repository, editor
+    ├── engine/             # MindCore (FuzzyMindCore, AnswerIndex), MessagePipeline, test chat
+    ├── learning/           # «Без ответа» queue (Room), search and bulk hide
+    ├── protection/         # anti-spam, blacklist
+    ├── ai/                 # external AI providers behind one router (Claude, Gemini, YandexGPT, OpenAI-compatible)
+    ├── telegram/           # Bot API client, long polling runner, file_id cache, settings UI
+    ├── backup/             # .kmbackup.json export/import and local backups
+    ├── update/             # self-update from GitHub Releases
+    ├── settings/           # AppPreferences (DataStore) and settings screens
+    └── security/           # Keystore AES-GCM SecretStore
 ```
 
-## New engine: MindCore
+## Layers
 
-- Engine contract accepts a **plain user string** plus a read-only list of answers and returns a typed `MatchResult`.
-- No Android `Context`, Fragment, network, Bot API, service, or UI dependencies.
-- UI Alpha includes only whitespace/case normalized exact matching, not AI/fuzzy matching.
-- Future units: tokenization, searchable index, multiple answer variants, context, rules, permissions, async pipeline, telemetry, performance tests.
-- Never copy older Kiro Bot / FP iHA Bot implementation code; document licenses of any adopted third-party library.
+- `domain` has no Android, Compose, Room or network dependencies and is unit-tested on the JVM.
+- `data` holds Room, DataStore, HTTP and Android APIs. `ui` holds Compose screens; screens get managers from `AppGraph`.
+- Telegram network code lives only in `feature/telegram`. Other features see only `ConnectionStatus`. The shared database contains its file_id cache table.
 
-## New answers repository
+## MindCore
 
-- New typed schema (`AnswerEntry`, `AnswerMedia`), no `question|reply|vk_attachment` convention.
-- Future Room tables: `answers`, `answer_variants`, `answer_media`, `unanswered_questions`, `categories`, `rules`.
-- Plan indexes on normalized question and foreign keys. Perform a tested migration plan rather than writing directly to old `answer.txt`.
-- Real media selection via Android Photo Picker / ACTION_OPEN_DOCUMENT; persist URI permission when appropriate, validate MIME, size, and content before sending; handle API-specific limits.
-- Never assume an arbitrary HTTPS link is downloadable media. Preview only after secure validation.
+- Accepts a plain user string and a read-only list of answers, returns a typed `MatchResult`.
+- Normalization → exact phrase → trigram index candidates → token similarity with a threshold and an ambiguity margin.
+- Follow-ups (`afterEntryId`) apply only in their context. Exclusion phrases (whole words) block an answer. The category does not affect matching.
+- Independent clean-room code. Never copy older Kiro Bot / FP iHA Bot implementations. Third-party licenses are in `THIRD_PARTY_NOTICES.md`.
 
-## Telegram isolation
+## Storage
 
-- `TelegramGateway` will implement Bot API with polling/webhooks chosen deliberately. Do not mix network calls into Compose screens or MindCore.
-- Tokens and API keys: Android Keystore-backed secret storage; fail closed on encryption errors. No plaintext fallback, no token printing, no logging message content by default.
-- Persist only necessary metadata, use small permissions, structured redacted logs, secure backup rules and lifecycle-safe services.
-- Bot start/stop must eventually be wired to a real service state, not to temporary `DemoSession.running`.
+- Room tables: `answers` (with `category`, `exclusions`), `answer_variants`, `answer_media`, `unknown_questions`, `blocked_users`, `telegram_file_cache`.
+- Every schema version has an explicit migration and an exported schema in `app/schemas`. Migrations are tested on the device (`StorageTest`).
+- Media via SAF (`ACTION_OPEN_DOCUMENT`) with persisted read permission. Size limits are checked before upload.
+
+## Security
+
+- Tokens and API keys: Android Keystore AES-GCM. Encryption errors fail closed, with no plaintext fallback.
+- The journal holds no message text, tokens or IDs. Backups never include secrets.
+- The bot runs only after the owner turns it on (`BotSession.running` + `BotService`).

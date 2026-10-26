@@ -13,12 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kirdev.kiromindbot.core.designsystem.*
-import com.kirdev.kiromindbot.core.state.DemoSession
+import com.kirdev.kiromindbot.core.state.BotSession
 import com.kirdev.kiromindbot.feature.telegram.api.ConnectionStatus
 import com.kirdev.kiromindbot.core.ui.*
 
 @Composable
-fun HomeScreen(session: DemoSession, answerCount: Int, telegram: ConnectionStatus, hasToken: Boolean, onToggle: () -> Unit, onTelegram: () -> Unit, onTerminal: () -> Unit, onAnswers: () -> Unit, onEngine: () -> Unit, onSecurity: () -> Unit) {
+fun HomeScreen(session: BotSession, answerCount: Int, telegram: ConnectionStatus, hasToken: Boolean, onToggle: () -> Unit, onTelegram: () -> Unit, onTerminal: () -> Unit, onAnswers: () -> Unit, onEngine: () -> Unit, onSecurity: () -> Unit) {
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

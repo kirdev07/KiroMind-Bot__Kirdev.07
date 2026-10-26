@@ -31,6 +31,6 @@
 - [x] Supported: Android 10 and newer (minSdk 29, targetSdk 36). Tested on a Xiaomi M2102J20SG phone (Android 12); a separate check on every version is not planned (owner decision).
 - [x] Release signing (v1.0.0).
 - [x] Licensing review: every runtime dependency is Apache 2.0 or MIT (checked from POMs); `THIRD_PARTY_NOTICES.md`, NOTICE and the in-app «Лицензии» screen.
-- [ ] Architecture cleanup.
+- [x] Architecture cleanup: `DemoSession` → `BotSession` (it is the real session), unused `DemoAnswerRepository` removed, ARCHITECTURE.md rewritten to the current structure.
 
 Do not claim Alpha 1 is a working production Telegram bot.

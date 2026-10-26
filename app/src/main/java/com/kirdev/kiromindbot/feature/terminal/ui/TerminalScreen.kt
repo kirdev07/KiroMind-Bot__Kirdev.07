@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kirdev.kiromindbot.core.designsystem.*
-import com.kirdev.kiromindbot.core.state.DemoSession
+import com.kirdev.kiromindbot.core.state.BotSession
 import com.kirdev.kiromindbot.core.ui.*
 import com.kirdev.kiromindbot.feature.terminal.domain.EventKind
 
 @Composable
-fun TerminalScreen(session: DemoSession) {
+fun TerminalScreen(session: BotSession) {
     var filter by remember { mutableStateOf("Все") }
     var query by remember { mutableStateOf("") }
     var paused by remember { mutableStateOf(false) }
@@ -33,7 +33,7 @@ fun TerminalScreen(session: DemoSession) {
                 StatusDot(session.running)
                 Text(if (session.running) "Бот работает" else "Бот остановлен", style = MaterialTheme.typography.bodySmall)
             }
-            Text("${session.events.size} событий", color = AppMuted, style = MaterialTheme.typography.bodySmall)
+            Text(plural(session.events.size, "событие", "события", "событий"), color = AppMuted, style = MaterialTheme.typography.bodySmall)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf("Все", "Диалоги", "Ошибки").forEach { item ->

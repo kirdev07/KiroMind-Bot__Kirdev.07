@@ -7,7 +7,7 @@ import com.kirdev.kiromindbot.feature.terminal.domain.EventKind
 import com.kirdev.kiromindbot.feature.terminal.domain.LogEvent
 
 /** Bot on/off switch and the terminal event log. Telegram runs only after the user turns it on. */
-class DemoSession {
+class BotSession {
     var running by mutableStateOf(false)
         private set
     var events by mutableStateOf(listOf(LogEvent(1, java.time.LocalTime.now().withNano(0).toString(), EventKind.SYSTEM, "Запуск MindCore 1.0")))

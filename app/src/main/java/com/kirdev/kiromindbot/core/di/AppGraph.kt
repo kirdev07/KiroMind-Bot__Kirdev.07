@@ -8,7 +8,7 @@ import com.kirdev.kiromindbot.BuildConfig
 import com.kirdev.kiromindbot.feature.update.data.UpdateManager
 import com.kirdev.kiromindbot.feature.update.domain.SemVer
 import com.kirdev.kiromindbot.feature.update.domain.UpdateCheck
-import com.kirdev.kiromindbot.core.state.DemoSession
+import com.kirdev.kiromindbot.core.state.BotSession
 import com.kirdev.kiromindbot.feature.answers.data.DemoAnswers
 import com.kirdev.kiromindbot.feature.answers.data.RoomAnswerRepository
 import com.kirdev.kiromindbot.feature.answers.domain.AnswerEntry
@@ -65,7 +65,7 @@ class AppGraph private constructor(context: Context) {
     private val appContext = context
     private val main = Handler(Looper.getMainLooper())
 
-    val session = DemoSession()
+    val session = BotSession()
 
     val answers = RoomAnswerRepository(
         dao = database.answers(),
