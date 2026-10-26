@@ -1,5 +1,5 @@
 // Single source of the app version. CI passes -PappVersion=1.2.3 from the git tag.
-val appVersion: String = (findProperty("appVersion") as String?) ?: "1.0.0"
+val appVersion: String = (findProperty("appVersion") as String?) ?: "1.0.1"
 // Must match SemVer.versionCode in the app: 1.2.3 -> 10203.
 val appVersionCode: Int = appVersion.split(".").map { it.toInt() }.let { (a, b, c) -> a * 10_000 + b * 100 + c }
 

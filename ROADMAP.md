@@ -1,6 +1,6 @@
 # KiroMind Bot 1.0 — staged plan
 
-## Alpha 1 — independent UI foundation (current)
+## Alpha 1 — independent UI foundation
 - [x] New name / package / folder architecture.
 - [x] Five Compose sections and nested settings.
 - [x] New MindCore interface and exact resolver.
@@ -33,4 +33,4 @@
 - [x] Licensing review: every runtime dependency is Apache 2.0 or MIT (checked from POMs); `THIRD_PARTY_NOTICES.md`, NOTICE and the in-app «Лицензии» screen.
 - [x] Architecture cleanup: `DemoSession` → `BotSession` (it is the real session), unused `DemoAnswerRepository` removed, ARCHITECTURE.md rewritten to the current structure.
 
-Do not claim Alpha 1 is a working production Telegram bot.
+Status: 1.0.x is a working Telegram bot (long polling, foreground service). Releases are signed and published on GitHub; see RELEASING.md.
