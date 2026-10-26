@@ -9,7 +9,7 @@
 
 ## Alpha 2 — durable answers
 - [x] Add Room repository, migrations baseline (v1 + exported schema), transactional media and variants.
-- [x] File picker (SAF, persisted read permission), Telegram upload with file_id cache, size limits. (Thumbnails — later.)
+- [x] File picker (SAF, persisted read permission), Telegram upload with file_id cache, size limits. Thumbnails for local photo/GIF/video via `ContentResolver.loadThumbnail` (no extra library).
 - [x] Unanswered queue, query indexes, verified import/export (`.kmbackup.json`) and local backups. Queue search, sorting (новые/частые) and bulk hide with confirmation.
 
 ## Alpha 3 — MindCore engine

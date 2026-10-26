@@ -225,7 +225,7 @@ private fun MediaEditor(media: SnapshotStateList<AnswerMedia>) {
         }
         media.forEach { item ->
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Icon(iconFor(item.kind), null, tint = AppMuted)
+                MediaThumbnail(item, iconFor(item.kind))
                 Column(Modifier.weight(1f)) {
                     Text(item.displayName, maxLines = 1)
                     Text("${item.kind.name} · ${sourceLabel(item.source)}", color = AppMuted, style = MaterialTheme.typography.labelSmall)
