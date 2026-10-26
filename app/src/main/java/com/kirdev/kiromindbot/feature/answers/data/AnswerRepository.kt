@@ -9,4 +9,6 @@ interface AnswerRepository {
     fun toggleFavorite(id: Long)
     fun remove(id: Long)
     fun find(id: Long): AnswerEntry?
+    /** Replaces the whole base atomically (import, restore). */
+    fun replaceAll(entries: List<AnswerEntry>)
 }

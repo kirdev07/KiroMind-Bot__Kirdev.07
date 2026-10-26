@@ -70,6 +70,7 @@ fun KiroMindApp() {
     LaunchedEffect(Unit) {
         graph.restoreBot("восстановлен после перезапуска")
         graph.checkUpdatesIfDue()
+        graph.autoBackup()
     }
     val answers by repository.entries.collectAsState()
     val unknownList by unknownQuestions.items.collectAsState()
@@ -189,6 +190,9 @@ fun KiroMindApp() {
                 )
             }
             composable("settings") { SettingsScreen(onSelect = { nav.navigate("settings/$it") }) }
+            composable("settings/backup") {
+                com.kirdev.kiromindbot.feature.backup.ui.BackupScreen(graph.backups, answers.size, onBack = { nav.popBackStack() })
+            }
             composable("settings/updates") {
                 com.kirdev.kiromindbot.feature.update.ui.UpdateScreen(graph.updates, onBack = { nav.popBackStack() })
             }
@@ -212,6 +216,7 @@ fun KiroMindApp() {
                     blockedCount = blocked.count { it.isActive(System.currentTimeMillis()) },
                     onBlacklist = { nav.navigate("settings/blacklist") },
                     onUpdates = { nav.navigate("settings/updates") },
+                    onBackup = { nav.navigate("settings/backup") },
                     onBack = { nav.popBackStack() }
                 )
             }

@@ -32,6 +32,7 @@ fun SettingsDetailScreen(
     blockedCount: Int,
     onBlacklist: () -> Unit,
     onUpdates: () -> Unit,
+    onBackup: () -> Unit,
     onBack: ()->Unit
 ) {
     val heading = categories.find { it.route == section }?.title ?: "Настройки"
@@ -82,9 +83,9 @@ fun SettingsDetailScreen(
                 Panel {
                     SettingRow("База ответов", "Room на устройстве · сохраняется между запусками")
                     DividerLine()
-                    SettingRow("Импорт / экспорт", "Будущий отдельный экран")
+                    SettingRow("Импорт и экспорт", "Файл .kmbackup.json", onBackup) { Icon(Icons.Outlined.ChevronRight, null, tint = AppMuted) }
                     DividerLine()
-                    SettingRow("Резервные копии", "Будущий отдельный экран")
+                    SettingRow("Резервные копии", "Авто раз в сутки и перед импортом · последние 7", onBackup) { Icon(Icons.Outlined.ChevronRight, null, tint = AppMuted) }
                 }
                 var expanded by remember { mutableStateOf(false) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -98,7 +99,7 @@ fun SettingsDetailScreen(
                         }
                     }
                 }
-                Note("Ответы и «Без ответа» хранятся на устройстве. Импорт, экспорт и резервные копии пока не реализованы.")
+                Note("Ответы и «Без ответа» хранятся на устройстве. В резервные копии и экспорт входит база ответов; токены и ключи — никогда.")
             }
             "app" -> {
                 Panel {

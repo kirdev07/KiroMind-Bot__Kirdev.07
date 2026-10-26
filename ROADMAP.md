@@ -10,7 +10,7 @@
 ## Alpha 2 — durable answers
 - [x] Add Room repository, migrations baseline (v1 + exported schema), transactional media and variants.
 - [x] File picker (SAF, persisted read permission), Telegram upload with file_id cache, size limits. (Thumbnails — later.)
-- [ ] Implement unanswered queue, query indexes, filtering, bulk edit and verified imports.
+- [x] Unanswered queue, query indexes, verified import/export (`.kmbackup.json`) and local backups. (Filtering of the queue and bulk edit — later.)
 
 ## Alpha 3 — MindCore engine
 - [x] Independent normalization/tokenization, scoring and threshold tests (`FuzzyMindCore`, clean-room).

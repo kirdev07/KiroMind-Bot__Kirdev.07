@@ -41,6 +41,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.preferencesDataStore
 import com.kirdev.kiromindbot.core.service.BotService
@@ -210,6 +211,14 @@ class AppGraph private constructor(context: Context) {
     }
 
     init { scope.launch { ai.refreshKeys() } }
+
+    val backups = com.kirdev.kiromindbot.feature.backup.data.BackupManager(context, answers, BuildConfig.VERSION_NAME, scope)
+
+    /** Daily local copy of the answer base, once it has been loaded from disk. */
+    fun autoBackup() = scope.launch {
+        answers.loaded.first { it }
+        runCatching { backups.autoBackupIfDue() }
+    }
 
     val updates = UpdateManager(context, SemVer.parse(BuildConfig.VERSION_NAME) ?: SemVer(1, 0, 0))
 

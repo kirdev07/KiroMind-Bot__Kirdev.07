@@ -39,4 +39,5 @@ class DemoAnswerRepository : AnswerRepository {
     override fun toggleFavorite(id: Long) { items.value = items.value.map { if (it.id == id) it.copy(favorite = !it.favorite) else it } }
     override fun remove(id: Long) { items.value = items.value.filterNot { it.id == id } }
     override fun find(id: Long): AnswerEntry? = items.value.firstOrNull { it.id == id }
+    override fun replaceAll(entries: List<AnswerEntry>) { items.value = entries.filter { it.isValid } }
 }

@@ -93,4 +93,10 @@ class RoomAnswerRepository(
     }
 
     override fun find(id: Long): AnswerEntry? = items.value.firstOrNull { it.id == id }
+
+    override fun replaceAll(entries: List<AnswerEntry>) {
+        val valid = entries.filter { it.isValid }
+        items.value = valid
+        write { dao.replaceEverything(valid.mapIndexed { i, e -> e.toRows(i) }) }
+    }
 }

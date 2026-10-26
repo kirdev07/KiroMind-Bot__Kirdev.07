@@ -45,4 +45,15 @@ interface AnswerDao {
 
     @Transaction
     suspend fun replaceAll(all: List<AnswerRows>) = all.forEach { replace(it) }
+
+    @Query("DELETE FROM reply_variants") suspend fun clearVariants()
+    @Query("DELETE FROM answer_media") suspend fun clearMedia()
+    @Query("DELETE FROM answers") suspend fun clearAnswers()
+
+    /** Wipes and rewrites the base in one transaction: an import either fully lands or not at all. */
+    @Transaction
+    suspend fun replaceEverything(all: List<AnswerRows>) {
+        clearVariants(); clearMedia(); clearAnswers()
+        all.forEach { replace(it) }
+    }
 }
