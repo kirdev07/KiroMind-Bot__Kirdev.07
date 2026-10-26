@@ -178,3 +178,10 @@ Xiaomi Poco X3 Pro (M2102J20SG), Android 12, 1080×2400.
 - **Проверено на телефоне**: автокопия при запуске; «Создать копию сейчас»; экспорт в «Загрузки» через системное окно (2645 байт); импорт этого же файла показал предпросмотр «добавится 0, обновится 0, без изменений 8»; «Объединить» выполнилось и создало страховочную копию. Сбоев нет.
 - **Не проверено на телефоне**: «Заменить всё» и восстановление из копии (их покрывают тесты). У окна выбора MIUI экспортированные файлы отображаются с размером «0 Б» — это устаревшие сведения каталога медиафайлов, на диске файлы полные.
 - **Тесты**: 130 на компьютере, все проходят.
+
+## Settings audit (2026-10-27)
+- Removed dead settings: «Автоматический характер» (replaced by a persona picker in «Диалоги») and «Срок хранения логов» (replaced by «Экспорт журнала» in the terminal).
+- `mentionsEnabled`: an @mention or a reply to the bot counts as addressing it only when this is on.
+- `diagnosticLogs`: logs skip and miss reasons to the terminal, never message text.
+- `notifications`: shows a notification when the Telegram connection goes to Error.
+- Unit tests: 132/132 passed. On the phone: the persona choice survives an app restart and the export button works. The error notification was not checked live.

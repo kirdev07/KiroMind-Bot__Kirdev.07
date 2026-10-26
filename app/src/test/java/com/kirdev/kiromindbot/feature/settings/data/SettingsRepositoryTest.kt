@@ -9,9 +9,9 @@ import org.junit.Test
 
 class SettingsRepositoryTest {
     private val custom = AppPreferences(
-        contextEnabled = false, autoMood = true, persona = Persona.CHEEKY, groupsEnabled = true,
+        contextEnabled = false, persona = Persona.CHEEKY, groupsEnabled = true,
         mentionsEnabled = false, antiSpam = false, autoBan = true, logUnknown = false, diagnosticLogs = true,
-        notifications = false, groupPrefix = "Кира,", ownerIds = "11, 22", logRetentionDays = "30"
+        notifications = false, groupPrefix = "Кира,", ownerIds = "11, 22"
     )
 
     @Test fun everyFieldRoundTrips() {

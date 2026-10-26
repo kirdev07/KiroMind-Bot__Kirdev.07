@@ -42,6 +42,10 @@ fun TerminalScreen(session: DemoSession) {
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(value = query, onValueChange = { query = it }, modifier = Modifier.weight(1f), placeholder = { Text("Найти событие") }, singleLine = true, leadingIcon = { Icon(Icons.Outlined.Search, null) })
+            val context = androidx.compose.ui.platform.LocalContext.current
+            FilledTonalIconButton(onClick = { shareJournal(context, filtered) }, enabled = filtered.isNotEmpty()) {
+                Icon(Icons.Outlined.Share, contentDescription = "Экспорт журнала")
+            }
             FilledTonalIconButton(onClick = { paused = !paused }) {
                 Icon(if (paused) Icons.Outlined.PlayArrow else Icons.Outlined.Pause, contentDescription = "Пауза просмотра")
             }
@@ -71,4 +75,14 @@ fun TerminalScreen(session: DemoSession) {
         }
         Text(if (paused) "Просмотр приостановлен" else "Без текста сообщений, токенов и ID · последние 500 событий", color = AppMuted, style = MaterialTheme.typography.labelSmall)
     }
+}
+
+/** Shares the shown events as plain text; the journal never holds message text, tokens or IDs. */
+private fun shareJournal(context: android.content.Context, events: List<com.kirdev.kiromindbot.feature.terminal.domain.LogEvent>) {
+    val text = "KiroMind Bot ${com.kirdev.kiromindbot.BuildConfig.VERSION_NAME} — журнал\n" +
+        events.joinToString("\n") { "${it.timestamp} ${it.kind.name.padEnd(7)} ${it.message}" }
+    val send = android.content.Intent(android.content.Intent.ACTION_SEND).setType("text/plain")
+        .putExtra(android.content.Intent.EXTRA_SUBJECT, "Журнал KiroMind Bot")
+        .putExtra(android.content.Intent.EXTRA_TEXT, text)
+    context.startActivity(android.content.Intent.createChooser(send, "Экспорт журнала"))
 }

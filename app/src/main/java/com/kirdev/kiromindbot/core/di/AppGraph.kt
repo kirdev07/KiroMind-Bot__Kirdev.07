@@ -126,7 +126,9 @@ class AppGraph private constructor(context: Context) {
             externalAiEnabled = p.externalAiEnabled,
             shareContextWithAi = p.shareContextWithAi,
             aiDailyLimit = p.aiDailyLimit,
-            ownerIds = parseOwners(p.ownerIds)
+            ownerIds = parseOwners(p.ownerIds),
+            mentionsEnabled = p.mentionsEnabled,
+            verbose = p.diagnosticLogs
         )
     }
 
@@ -213,6 +215,15 @@ class AppGraph private constructor(context: Context) {
     init { scope.launch { ai.refreshKeys() } }
 
     val backups = com.kirdev.kiromindbot.feature.backup.data.BackupManager(context, answers, BuildConfig.VERSION_NAME, scope)
+
+    init {
+        scope.launch {
+            telegram.status.collect { s ->
+                if (s is com.kirdev.kiromindbot.feature.telegram.api.ConnectionStatus.Error && settings.preferences.value.notifications)
+                    BotService.alert(appContext, s.summary)
+            }
+        }
+    }
 
     /** Daily local copy of the answer base, once it has been loaded from disk. */
     fun autoBackup() = scope.launch {

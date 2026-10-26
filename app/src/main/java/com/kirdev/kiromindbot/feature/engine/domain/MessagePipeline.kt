@@ -49,7 +49,11 @@ data class BehaviorSettings(
     val externalAiEnabled: Boolean = false,
     val shareContextWithAi: Boolean = false,
     val aiTimeoutMillis: Long = 25_000,
-    val aiDailyLimit: Int = 50
+    val aiDailyLimit: Int = 50,
+    /** In groups, an @mention or a reply to the bot counts as addressing it. */
+    val mentionsEnabled: Boolean = true,
+    /** Journal every skip and miss reason (never message text). */
+    val verbose: Boolean = false
 )
 
 /** Ready-to-send result; the Telegram module uploads [media] in the given order. */
@@ -119,34 +123,34 @@ class MessagePipeline(
     private suspend fun run(message: IncomingMessage, settings: BehaviorSettings): Outcome {
         // 1. Admissibility.
         if (!isRunning()) return Outcome.Stopped
-        if (message.fromSelf) return Outcome.Ignored("собственное сообщение")
+        if (message.fromSelf) return skip(settings, "собственное сообщение")
         if (message.senderIsBot) return ignored("сообщение от бота — защита от циклов")
         val isOwner = message.senderId in settings.ownerIds
         // Silent: logging every message of a blocked user would flood the journal.
-        if (!isOwner && blacklist?.isBlocked(message.senderId, clock()) == true) return Outcome.Ignored("в чёрном списке")
+        if (!isOwner && blacklist?.isBlocked(message.senderId, clock()) == true) return skip(settings, "в чёрном списке")
         var text = message.text.trim()
-        if (text.isEmpty()) return Outcome.Ignored("пустое сообщение")
+        if (text.isEmpty()) return skip(settings, "пустое сообщение")
 
         // 2. Commands and chat rules.
-        var addressed = message.chatKind == ChatKind.PRIVATE || message.mentionsBot || message.replyToBot
+        var addressed = message.chatKind == ChatKind.PRIVATE || (settings.mentionsEnabled && (message.mentionsBot || message.replyToBot))
         if (text.startsWith("/")) {
             val command = text.substringBefore(' ').substringBefore('@').lowercase()
             val argument = text.substringAfter(' ', "").trim()
             when (command) {
                 "/teach" -> return teach(message, settings, argument)
                 "/ask" -> { text = argument; addressed = true }
-                "/start", "/help" -> if (addressed) return commandReply(if (isOwner) OWNER_HELP else GREETING) else return Outcome.Ignored("команда не боту")
+                "/start", "/help" -> if (addressed) return commandReply(if (isOwner) OWNER_HELP else GREETING) else return skip(settings, "команда не боту")
                 "/block", "/unblock", "/blocked", "/stop" ->
                     return if (isOwner) ownerCommand(command, argument, message, settings) else ignored("команда владельца от неавторизованного пользователя")
-                else -> return Outcome.Ignored("неизвестная команда")
+                else -> return skip(settings, "неизвестная команда")
             }
         }
         if (message.chatKind == ChatKind.GROUP) {
-            if (!settings.groupsEnabled) return Outcome.Ignored("группы выключены")
+            if (!settings.groupsEnabled) return skip(settings, "группы выключены")
             stripAddress(text, settings)?.let { text = it; addressed = true }
-            if (!addressed && !settings.groupReplyToAll) return Outcome.Ignored("к боту не обращались")
+            if (!addressed && !settings.groupReplyToAll) return skip(settings, "к боту не обращались")
         }
-        if (TextNormalizer.normalize(text).isEmpty()) return Outcome.Ignored("нет текста")
+        if (TextNormalizer.normalize(text).isEmpty()) return skip(settings, "нет текста")
         if (settings.antiSpam && !isOwner && antiSpam != null) {
             val verdict = antiSpam.check(message.senderId, text, clock(), settings.autoBan)
             if (verdict is SpamVerdict.Drop) {
@@ -195,7 +199,7 @@ class MessagePipeline(
 
         // 10. Diagnostics.
         diagnostics.emit(DiagnosticEvent(DiagnosticEvent.Level.WARNING,
-            if (recorded) "Нет ответа, вопрос добавлен в «Без ответа»" else "Нет ответа"))
+            (if (recorded) "Нет ответа, вопрос добавлен в «Без ответа»" else "Нет ответа") + (if (settings.verbose) " · $reason" else "")))
         return Outcome.NoAnswer(reason, recorded)
     }
 
@@ -290,6 +294,12 @@ class MessagePipeline(
             diagnostics.emit(DiagnosticEvent(DiagnosticEvent.Level.WARNING, "${provider.name} недоступен"))
             null
         }
+    }
+
+    /** Routine skips stay out of the journal unless MindCore diagnostics are on. */
+    private fun skip(settings: BehaviorSettings, reason: String): Outcome {
+        if (settings.verbose) diagnostics.emit(DiagnosticEvent(DiagnosticEvent.Level.INFO, "Пропущено: $reason"))
+        return Outcome.Ignored(reason)
     }
 
     private fun ignored(reason: String): Outcome {

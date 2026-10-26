@@ -42,6 +42,6 @@ fun SettingsScreen(onSelect: (String) -> Unit) {
                 if (index < categories.lastIndex) DividerLine()
             }
         }
-        Text("Настройки пока работают в памяти и сбрасываются после закрытия приложения.", color = AppMuted, style = MaterialTheme.typography.labelSmall)
+        Text("Настройки сохраняются на устройстве. Токены и ключи — в зашифрованном хранилище.", color = AppMuted, style = MaterialTheme.typography.labelSmall)
     }
 }

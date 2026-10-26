@@ -64,7 +64,6 @@ object SettingsKeys {
     /** Same name as the old SharedPreferences key, so SharedPreferencesMigration carries it over. */
     val OWNER_IDS = stringPreferencesKey("telegram_owner_ids")
     private val CONTEXT = booleanPreferencesKey("context_enabled")
-    private val AUTO_MOOD = booleanPreferencesKey("auto_mood")
     private val PERSONA = stringPreferencesKey("persona")
     private val GROUPS = booleanPreferencesKey("groups_enabled")
     private val MENTIONS = booleanPreferencesKey("mentions_enabled")
@@ -74,7 +73,6 @@ object SettingsKeys {
     private val DIAGNOSTIC_LOGS = booleanPreferencesKey("diagnostic_logs")
     private val NOTIFICATIONS = booleanPreferencesKey("notifications")
     private val GROUP_PREFIX = stringPreferencesKey("group_prefix")
-    private val LOG_RETENTION = stringPreferencesKey("log_retention_days")
     private val AI_ENABLED = booleanPreferencesKey("external_ai_enabled")
     private val AI_CONTEXT = booleanPreferencesKey("share_context_with_ai")
     private val AI_DAILY = intPreferencesKey("ai_daily_limit")
@@ -90,7 +88,6 @@ object SettingsKeys {
         val d = AppPreferences()
         return AppPreferences(
             contextEnabled = p[CONTEXT] ?: d.contextEnabled,
-            autoMood = p[AUTO_MOOD] ?: d.autoMood,
             persona = Persona.entries.firstOrNull { it.name == p[PERSONA] } ?: d.persona,
             groupsEnabled = p[GROUPS] ?: d.groupsEnabled,
             mentionsEnabled = p[MENTIONS] ?: d.mentionsEnabled,
@@ -101,7 +98,6 @@ object SettingsKeys {
             notifications = p[NOTIFICATIONS] ?: d.notifications,
             groupPrefix = p[GROUP_PREFIX] ?: d.groupPrefix,
             ownerIds = p[OWNER_IDS] ?: d.ownerIds,
-            logRetentionDays = p[LOG_RETENTION] ?: d.logRetentionDays,
             externalAiEnabled = p[AI_ENABLED] ?: d.externalAiEnabled,
             shareContextWithAi = p[AI_CONTEXT] ?: d.shareContextWithAi,
             aiDailyLimit = (p[AI_DAILY] ?: d.aiDailyLimit).coerceIn(1, 1000),
@@ -116,7 +112,6 @@ object SettingsKeys {
 
     fun write(p: MutablePreferences, v: AppPreferences) {
         p[CONTEXT] = v.contextEnabled
-        p[AUTO_MOOD] = v.autoMood
         p[PERSONA] = v.persona.name
         p[GROUPS] = v.groupsEnabled
         p[MENTIONS] = v.mentionsEnabled
@@ -127,7 +122,6 @@ object SettingsKeys {
         p[NOTIFICATIONS] = v.notifications
         p[GROUP_PREFIX] = v.groupPrefix
         p[OWNER_IDS] = v.ownerIds
-        p[LOG_RETENTION] = v.logRetentionDays
         p[AI_ENABLED] = v.externalAiEnabled
         p[AI_CONTEXT] = v.shareContextWithAi
         p[AI_DAILY] = v.aiDailyLimit

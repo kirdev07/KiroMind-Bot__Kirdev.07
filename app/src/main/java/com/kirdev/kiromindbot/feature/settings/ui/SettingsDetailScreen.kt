@@ -46,16 +46,20 @@ fun SettingsDetailScreen(
             "dialogs" -> {
                 Panel {
                     ToggleRow("Контекст диалога", "Помнить последние реплики собеседника", settings.contextEnabled) { onChange(settings.copy(contextEnabled=it)) }
-                    DividerLine()
-                    ToggleRow("Автоматический характер", "Будет подключён к движку позднее", settings.autoMood) { onChange(settings.copy(autoMood=it)) }
                 }
-                Note("Настройки, кроме ID владельцев, пока сбрасываются после перезапуска приложения.")
+                Label("Характер ответов")
+                Row(Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    com.kirdev.kiromindbot.feature.engine.domain.Persona.entries.forEach { p ->
+                        FilterChip(selected = settings.persona == p, onClick = { onChange(settings.copy(persona = p)) }, label = { Text(personaLabel(p)) })
+                    }
+                }
+                Note("Характер выбирает стиль среди вариантов ответа. «Авто» подстраивается под тон собеседника.")
             }
             "groups" -> {
                 Panel {
                     ToggleRow("Работа в группах", "Отвечать в группах при обращении, упоминании или ответе боту", settings.groupsEnabled) { onChange(settings.copy(groupsEnabled=it)) }
                     DividerLine()
-                    ToggleRow("Ответы на упоминания", "После подключения Telegram", settings.mentionsEnabled) { onChange(settings.copy(mentionsEnabled=it)) }
+                    ToggleRow("Ответы на упоминания", "@бот или ответ на сообщение бота считается обращением", settings.mentionsEnabled) { onChange(settings.copy(mentionsEnabled=it)) }
                 }
                 OutlinedTextField(value = settings.groupPrefix, onValueChange = { onChange(settings.copy(groupPrefix=it)) }, modifier = Modifier.fillMaxWidth(), label = { Text("Обращение к боту") }, singleLine = true)
             }
@@ -75,9 +79,9 @@ fun SettingsDetailScreen(
                 Panel {
                     ToggleRow("Неизвестные вопросы", "Будет сохранять новые вопросы", settings.logUnknown) { onChange(settings.copy(logUnknown=it)) }
                     DividerLine()
-                    ToggleRow("Диагностика MindCore", "Подробные события подбора", settings.diagnosticLogs) { onChange(settings.copy(diagnosticLogs=it)) }
+                    ToggleRow("Диагностика MindCore", "Причины пропуска и промаха в терминале — без текста сообщений", settings.diagnosticLogs) { onChange(settings.copy(diagnosticLogs=it)) }
                 }
-                Note("Поиск MindCore уже доступен в тестовом чате. Обучение и реальные неизвестные вопросы добавим позже.")
+                Note("Вопросы без ответа попадают на экран «Без ответа», откуда их можно сразу научить.")
             }
             "storage" -> {
                 Panel {
@@ -87,23 +91,11 @@ fun SettingsDetailScreen(
                     DividerLine()
                     SettingRow("Резервные копии", "Авто раз в сутки и перед импортом · последние 7", onBackup) { Icon(Icons.Outlined.ChevronRight, null, tint = AppMuted) }
                 }
-                var expanded by remember { mutableStateOf(false) }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Срок хранения логов", modifier = Modifier.weight(1f))
-                    Box {
-                        OutlinedButton(onClick = { expanded = true }) { Text(if (settings.logRetentionDays=="manual") "Без автоочистки" else "${settings.logRetentionDays} дней") }
-                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded=false }) {
-                            listOf("1","7","30","manual").forEach { value ->
-                                DropdownMenuItem(text={ Text(if (value=="manual") "До ручной очистки" else "$value дней") },onClick={onChange(settings.copy(logRetentionDays=value));expanded=false})
-                            }
-                        }
-                    }
-                }
                 Note("Ответы и «Без ответа» хранятся на устройстве. В резервные копии и экспорт входит база ответов; токены и ключи — никогда.")
             }
             "app" -> {
                 Panel {
-                    ToggleRow("Уведомления", "Будет использовать Android Notifications", settings.notifications) { onChange(settings.copy(notifications=it)) }
+                    ToggleRow("Уведомления", "Сообщить, если бот потерял связь с Telegram", settings.notifications) { onChange(settings.copy(notifications=it)) }
                     DividerLine()
                     SettingRow("Оформление", "Fusion Minimal · AMOLED Black")
                     DividerLine()
@@ -124,3 +116,7 @@ private fun ToggleRow(title: String, subtitle: String, value: Boolean, onValueCh
 
 @Composable
 private fun Note(message: String) = Text(message, color = AppMuted, style = MaterialTheme.typography.bodySmall)
+
+private fun personaLabel(p: com.kirdev.kiromindbot.feature.engine.domain.Persona) = when (p.name) {
+    "NEUTRAL" -> "Нейтральный"; "FRIENDLY" -> "Дружелюбный"; "POLITE" -> "Вежливый"; "CHEEKY" -> "Дерзкий"; else -> "Авто"
+}

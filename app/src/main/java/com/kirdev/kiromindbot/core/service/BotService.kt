@@ -59,6 +59,23 @@ class BotService : Service() {
 
     companion object {
         private const val CHANNEL = "bot_running"
+        private const val ALERTS = "bot_alerts"
+        private const val ALERT_ID = 2
+
+        /** One replaceable alert; [summary] is a status line, never message text or a token. */
+        fun alert(context: Context, summary: String) {
+            val manager = context.getSystemService(NotificationManager::class.java)
+            if (!manager.areNotificationsEnabled()) return
+            manager.createNotificationChannel(NotificationChannel(ALERTS, "Ошибки бота", NotificationManager.IMPORTANCE_DEFAULT))
+            val open = PendingIntent.getActivity(context, 1, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
+            manager.notify(ALERT_ID, Notification.Builder(context, ALERTS)
+                .setSmallIcon(android.R.drawable.stat_notify_error)
+                .setContentTitle("KiroMind Bot: нет связи с Telegram")
+                .setContentText(summary)
+                .setContentIntent(open)
+                .setAutoCancel(true)
+                .build())
+        }
         private const val ID = 1
 
         fun start(context: Context) = context.startForegroundService(Intent(context, BotService::class.java))

@@ -45,6 +45,21 @@ class MessagePipelineTest {
     private fun go(m: IncomingMessage, s: BehaviorSettings = settings, pipe: MessagePipeline = p) = runBlocking { pipe.process(m, s) }
     private fun replyOf(o: Outcome) = (o as Outcome.Reply).reply
 
+    @Test fun mentionsCountOnlyWhenEnabled() {
+        val groups = settings.copy(groupsEnabled = true)
+        assertTrue(go(gm("привет", mention = true), groups) is Outcome.Reply)
+        assertTrue(go(gm("привет", mention = true), groups.copy(mentionsEnabled = false)) is Outcome.Ignored)
+    }
+
+    @Test fun verboseJournalsSkipsWithoutMessageText() {
+        events.clear()
+        go(gm("секретная фраза"), settings)
+        assertTrue(events.isEmpty())
+        go(gm("секретная фраза"), settings.copy(verbose = true))
+        assertTrue(events.single().message.contains("группы выключены"))
+        assertFalse(events.any { it.message.contains("секретная") })
+    }
+
     @Test fun answersPrivateMessage() {
         val r = replyOf(go(pm("привте")))
         assertEquals(1L, r.entryId)
