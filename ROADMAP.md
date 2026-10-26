@@ -10,7 +10,7 @@
 ## Alpha 2 — durable answers
 - [x] Add Room repository, migrations baseline (v1 + exported schema), transactional media and variants.
 - [x] File picker (SAF, persisted read permission), Telegram upload with file_id cache, size limits. (Thumbnails — later.)
-- [x] Unanswered queue, query indexes, verified import/export (`.kmbackup.json`) and local backups. (Filtering of the queue and bulk edit — later.)
+- [x] Unanswered queue, query indexes, verified import/export (`.kmbackup.json`) and local backups. Queue search, sorting (новые/частые) and bulk hide with confirmation.
 
 ## Alpha 3 — MindCore engine
 - [x] Independent normalization/tokenization, scoring and threshold tests (`FuzzyMindCore`, clean-room).
@@ -27,7 +27,7 @@
 
 ## Alpha 5 — external AI, privacy and quality
 - [x] Claude provider (official Anthropic SDK): Keystore key, per-minute and daily limits, opt-in context sharing. Gemini, YandexGPT and OpenAI-compatible (Groq/OpenRouter/OpenAI/self-hosted) via one router. GigaChat is intentionally not included (owner decision).
-- [x] Anti-spam (flood/repeat, optional auto-block), persistent blacklist, owner commands. (Log export — later.)
+- [x] Anti-spam (flood/repeat, optional auto-block), persistent blacklist, owner commands. Journal export from the terminal.
 - [ ] Smoke test Android 10–17, architecture cleanup, release signing, licensing review.
 
 Do not claim Alpha 1 is a working production Telegram bot.

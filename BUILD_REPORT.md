@@ -185,3 +185,7 @@ Xiaomi Poco X3 Pro (M2102J20SG), Android 12, 1080×2400.
 - `diagnosticLogs`: logs skip and miss reasons to the terminal, never message text.
 - `notifications`: shows a notification when the Telegram connection goes to Error.
 - Unit tests: 132/132 passed. On the phone: the persona choice survives an app restart and the export button works. The error notification was not checked live.
+
+## «Без ответа» queue (2026-10-27)
+- Search by normalized text (case, ё and punctuation are ignored), «Новые»/«Частые» sorting, item selection and bulk hide with a confirmation dialog.
+- Unit tests: 135/135. On the phone: sorting, search («PLA» → 2 questions) and select all → confirmation dialog → cancel all work; no data was deleted.

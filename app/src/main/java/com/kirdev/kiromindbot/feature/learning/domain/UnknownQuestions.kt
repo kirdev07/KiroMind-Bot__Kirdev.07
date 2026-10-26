@@ -27,6 +27,20 @@ interface UnknownQuestionStore {
     fun dismiss(key: String)
 }
 
+enum class UnknownSort { RECENT, FREQUENT }
+
+/** What the "Без ответа" screen shows: a normalized-text search, then the chosen order. */
+object UnknownQueueView {
+    fun of(items: List<UnknownQuestion>, query: String, sort: UnknownSort): List<UnknownQuestion> {
+        val q = TextNormalizer.normalize(query)
+        val hits = if (q.isEmpty()) items else items.filter { it.key.contains(q) }
+        return when (sort) {
+            UnknownSort.RECENT -> hits.sortedByDescending { it.lastSeenMillis }
+            UnknownSort.FREQUENT -> hits.sortedWith(compareByDescending<UnknownQuestion> { it.count }.thenByDescending { it.lastSeenMillis })
+        }
+    }
+}
+
 /** In-memory store until the Room repository lands; keeps the [capacity] most recent questions. */
 class InMemoryUnknownQuestionStore(private val capacity: Int = 500) : UnknownQuestionStore {
     private val byKey = LinkedHashMap<String, UnknownQuestion>()
