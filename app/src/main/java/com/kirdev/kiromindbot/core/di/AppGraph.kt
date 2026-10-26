@@ -225,6 +225,26 @@ class AppGraph private constructor(context: Context) {
         }
     }
 
+    /**
+     * Merges the answer base shipped in the APK once per pack version. Only new questions are added,
+     * so the owner's answers and edits are never overwritten. A safety copy is written first.
+     */
+    fun installBuiltInBase() = scope.launch {
+        answers.loaded.first { it }
+        runCatching {
+            val text = appContext.assets.open(BUILT_IN_ASSET).use { it.readBytes().toString(Charsets.UTF_8) }
+            val pack = com.kirdev.kiromindbot.feature.backup.domain.BuiltInPack.parse(text, firstId = 1) ?: return@launch
+            if (storagePrefs.getInt(KEY_BUILT_IN, 0) >= pack.version) return@launch
+            val before = answers.entries.value
+            if (before.isNotEmpty()) backups.backupNow("перед встроенной базой")
+            val merged = com.kirdev.kiromindbot.feature.backup.domain.BuiltInPack.mergeInto(before, pack.entries)
+            answers.replaceAll(merged)
+            answers.awaitWrites()
+            storagePrefs.edit().putInt(KEY_BUILT_IN, pack.version).apply()
+            main.post { session.log(EventKind.SUCCESS, "Встроенная база v${pack.version}: добавлено ${merged.size - before.size} ответов") }
+        }.onFailure { main.post { session.log(EventKind.ERROR, "Встроенная база не установлена: ${it::class.simpleName}") } }
+    }
+
     /** Daily local copy of the answer base, once it has been loaded from disk. */
     fun autoBackup() = scope.launch {
         answers.loaded.first { it }
@@ -249,6 +269,8 @@ class AppGraph private constructor(context: Context) {
 
     companion object {
         private const val KEY_SEEDED = "demo_seeded_v1"
+        private const val KEY_BUILT_IN = "built_in_base_version"
+        private const val BUILT_IN_ASSET = "base/kiromind-base.json"
         @Volatile private var instance: AppGraph? = null
 
         fun parseOwners(text: String): Set<Long> =

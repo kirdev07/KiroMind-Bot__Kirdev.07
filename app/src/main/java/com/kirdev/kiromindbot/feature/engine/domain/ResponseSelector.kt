@@ -15,7 +15,7 @@ enum class Persona(val title: String, val style: ReplyStyle?) {
     FRIENDLY("Дружелюбный", ReplyStyle.FRIENDLY),
     POLITE("Вежливый", ReplyStyle.POLITE),
     CHEEKY("Дерзкий", ReplyStyle.CHEEKY),
-    /** Any variant the author wrote, whatever its style. */
+    /** Mixes neutral, friendly and polite variants. Never cheeky: that style may contain swearing. */
     AUTO("Автоматический", null)
 }
 
@@ -28,7 +28,7 @@ class ResponseSelector(private val random: Random = Random.Default) {
         val pool = persona.style
             ?.let { style -> usable.filter { it.style == style }.ifEmpty { usable.filter { it.style == ReplyStyle.NEUTRAL } } }
             ?.ifEmpty { usable }
-            ?: usable
+            ?: usable.filter { it.style != ReplyStyle.CHEEKY }.ifEmpty { usable }
         val fresh = pool.filter { it.id != previousVariantId }.ifEmpty { pool }
         return weighted(fresh)
     }

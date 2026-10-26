@@ -71,6 +71,7 @@ fun KiroMindApp() {
         graph.restoreBot("восстановлен после перезапуска")
         graph.checkUpdatesIfDue()
         graph.autoBackup()
+        graph.installBuiltInBase()
     }
     val answers by repository.entries.collectAsState()
     val unknownList by unknownQuestions.items.collectAsState()

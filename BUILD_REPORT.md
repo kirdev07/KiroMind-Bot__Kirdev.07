@@ -214,3 +214,11 @@ Memory grows linearly, about 0.45 KB per entry. At 30k that is well within the h
 ## Licenses (2026-10-27)
 - `releaseRuntimeClasspath` was checked against the POMs in the Gradle cache. Apache 2.0: AndroidX, Kotlin, OkHttp/Okio, Jackson, Guava, Error Prone, victools, Swagger annotations, HttpComponents 5, JSpecify. MIT: Anthropic Java SDK, Standard Webhooks, SLF4J. No GPL/LGPL or other copyleft.
 - The MIT text and the library list are in `THIRD_PARTY_NOTICES.md` and in the app (Настройки → Приложение → Лицензии). `NOTICE` was updated.
+
+## Built-in answer base (2026-10-27)
+- One shared base with variants per character (обычный / дружелюбный / вежливый / дерзкий), not a separate base per mood: a question is matched once, then the character only picks the reply style.
+- `tools/basegen/topics.txt`: 106 hand-written topics in 8 categories (greetings, mood, about the bot, the developer Kirdev, small talk, jokes, knowledge, other). `generate_base.py` adds conversational phrasings («слушай…», «…бот») → 30,000 questions. Asset `assets/base/kiromind-base.json` is 1.3 MB; replies are stored once per topic.
+- On startup the app merges the pack once per version (`built_in_base_version`). It writes a safety copy first and adds only new questions; the owner's answers win. On the phone: «добавлено 29998 ответов» (2 matched existing ones), 30,006 entries, about 20 s in the background, no crash.
+- «Дерзкий» may swear (owner decision). «Авто» no longer picks cheeky variants.
+- MindCore: paraphrases with the same reply are no longer «rivals» in the ambiguity check, and edge fillers («ну», «бот», «слушай», «ладно»…) are ignored in similarity.
+- Unit tests: 150/150, including `ShippedBaseQualityTest` on the real base (phrases, typos, answers about Kirdev, a 600-question sample with no misses, «Авто» without cheeky).

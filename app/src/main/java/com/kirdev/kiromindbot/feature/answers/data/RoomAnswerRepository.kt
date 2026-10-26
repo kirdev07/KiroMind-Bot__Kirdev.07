@@ -92,6 +92,9 @@ class RoomAnswerRepository(
         write { dao.deleteWithChildren(id) }
     }
 
+    /** Suspends until every write queued so far is on disk (writes run in call order under one lock). */
+    suspend fun awaitWrites() = writeLock.withLock { }
+
     override fun find(id: Long): AnswerEntry? = items.value.firstOrNull { it.id == id }
 
     override fun replaceAll(entries: List<AnswerEntry>) {

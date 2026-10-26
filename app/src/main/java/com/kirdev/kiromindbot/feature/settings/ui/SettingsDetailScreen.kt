@@ -53,7 +53,7 @@ fun SettingsDetailScreen(
                         FilterChip(selected = settings.persona == p, onClick = { onChange(settings.copy(persona = p)) }, label = { Text(personaLabel(p)) })
                     }
                 }
-                Note("Характер выбирает стиль среди вариантов ответа. «Авто» подстраивается под тон собеседника.")
+                Note("Характер выбирает стиль среди вариантов ответа. «Авто» чередует обычный, дружелюбный и вежливый стили. «Дерзкий» может ругаться матом — только когда выбран явно.")
             }
             "groups" -> {
                 Panel {

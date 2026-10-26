@@ -65,7 +65,8 @@ class FuzzyMindCore(
         if (best.score < threshold) {
             return MatchResult.NotFound("лучшее совпадение ${percent(best.score)} ниже порога ${percent(threshold)}")
         }
-        val rival = ranked.drop(1).firstOrNull { it.item.phrase != best.item.phrase }
+        // Paraphrases of one topic share the reply, so they are not rivals of each other.
+        val rival = ranked.drop(1).firstOrNull { it.item.phrase != best.item.phrase && it.item.entry.reply != best.item.entry.reply }
         val contextualWin = best.item.entry.afterEntryId != null && rival?.item?.entry?.afterEntryId == null
         if (rival != null && !contextualWin && best.score < confident && best.score - rival.score < ambiguityMargin) {
             return MatchResult.NotFound("неоднозначно: #${best.item.entry.id} ${percent(best.score)} и #${rival.item.entry.id} ${percent(rival.score)}")
