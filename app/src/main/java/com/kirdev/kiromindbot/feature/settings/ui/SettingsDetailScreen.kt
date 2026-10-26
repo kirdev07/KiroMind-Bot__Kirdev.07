@@ -102,6 +102,10 @@ fun SettingsDetailScreen(
                     SettingRow("Версия", com.kirdev.kiromindbot.BuildConfig.VERSION_NAME)
                     DividerLine()
                     SettingRow("Обновления", "Через релизы GitHub", onUpdates) { Icon(Icons.Outlined.ChevronRight, null, tint = AppMuted) }
+                    DividerLine()
+                    var licenses by remember { mutableStateOf(false) }
+                    SettingRow("Лицензии", "Apache 2.0 · библиотеки Apache 2.0 и MIT", { licenses = true }) { Icon(Icons.Outlined.ChevronRight, null, tint = AppMuted) }
+                    if (licenses) LicensesDialog { licenses = false }
                 }
             }
             else -> Note("Неизвестный раздел")

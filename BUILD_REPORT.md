@@ -210,3 +210,7 @@ Memory grows linearly, about 0.45 KB per entry. At 30k that is well within the h
 - The «Без ответа» checkboxes are labeled «Выбрать: <вопрос>».
 - Decorative icons next to text keep `contentDescription = null`.
 - On the phone: checked in the accessibility tree that each row is one checkable node and that tapping the text toggles it.
+
+## Licenses (2026-10-27)
+- `releaseRuntimeClasspath` was checked against the POMs in the Gradle cache. Apache 2.0: AndroidX, Kotlin, OkHttp/Okio, Jackson, Guava, Error Prone, victools, Swagger annotations, HttpComponents 5, JSpecify. MIT: Anthropic Java SDK, Standard Webhooks, SLF4J. No GPL/LGPL or other copyleft.
+- The MIT text and the library list are in `THIRD_PARTY_NOTICES.md` and in the app (Настройки → Приложение → Лицензии). `NOTICE` was updated.

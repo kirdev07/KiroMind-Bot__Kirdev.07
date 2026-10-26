@@ -4,3 +4,7 @@ Copyright 2026 KiroMind Bot contributors
 This product is licensed under the Apache License, Version 2.0.
 It contains no source code from Kiro Bot 4.0, Kiro Brain, FP iHA Bot
 or other legacy implementations.
+
+Third-party components are listed in THIRD_PARTY_NOTICES.md: Apache 2.0
+(AndroidX, Kotlin, OkHttp, Jackson, Guava and others) and MIT (Anthropic Java SDK,
+Standard Webhooks, SLF4J).
