@@ -203,3 +203,10 @@ Xiaomi Poco X3 Pro (M2102J20SG), Android 12, 1080×2400.
 | 30,000 | 2.2 s | 13.4 MB | 8.7 ms | 29.8 ms | 47.7 ms |
 
 Memory grows linearly, about 0.45 KB per entry. At 30k that is well within the heap of a typical phone. The index is built in the background.
+
+## Accessibility (2026-10-27)
+- New `SwitchRow`: the whole row is one switch (`Role.Switch`), so TalkBack reads its title and state, and tapping the text toggles it. Used in all settings and on the AI screen.
+- The power button on the home screen has `Role.Button`. Its label already said «Запустить/Остановить бота».
+- The «Без ответа» checkboxes are labeled «Выбрать: <вопрос>».
+- Decorative icons next to text keep `contentDescription = null`.
+- On the phone: checked in the accessibility tree that each row is one checkable node and that tapping the text toggles it.

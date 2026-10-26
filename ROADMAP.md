@@ -5,7 +5,7 @@
 - [x] Five Compose sections and nested settings.
 - [x] New MindCore interface and exact resolver.
 - [x] Temporary answer repository / media metadata and test chat.
-- [ ] Run Android Gradle Sync, emulator build, accessibility checks and fix resulting errors.
+- [x] Gradle build on device; TalkBack pass: switch rows are one labeled switch (`SwitchRow`), power button has role Button, queue checkboxes are labeled. (Emulator matrix — with Alpha 5 smoke tests.)
 
 ## Alpha 2 — durable answers
 - [x] Add Room repository, migrations baseline (v1 + exported schema), transactional media and variants.

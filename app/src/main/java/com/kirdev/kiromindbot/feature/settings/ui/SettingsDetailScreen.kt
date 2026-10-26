@@ -111,7 +111,7 @@ fun SettingsDetailScreen(
 
 @Composable
 private fun ToggleRow(title: String, subtitle: String, value: Boolean, onValueChanged: (Boolean)->Unit) {
-    SettingRow(title, subtitle) { Switch(checked = value, onCheckedChange = onValueChanged) }
+    SwitchRow(title, subtitle, value, onCheckedChange = onValueChanged)
 }
 
 @Composable

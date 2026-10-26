@@ -11,6 +11,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -76,7 +78,8 @@ fun UnknownQuestionsScreen(
             items(shown, key = { it.key }) { q ->
                 Column {
                     Row(Modifier.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(checked = q.key in selected, onCheckedChange = { on -> selected = if (on) selected + q.key else selected - q.key })
+                        Checkbox(checked = q.key in selected, onCheckedChange = { on -> selected = if (on) selected + q.key else selected - q.key },
+                            modifier = Modifier.semantics { contentDescription = "Выбрать: ${q.sample.take(60)}" })
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(q.sample, fontWeight = FontWeight.Medium, maxLines = 3, overflow = TextOverflow.Ellipsis)
                             Text("×${q.count} · последний ${time.format(Date(q.lastSeenMillis))}",

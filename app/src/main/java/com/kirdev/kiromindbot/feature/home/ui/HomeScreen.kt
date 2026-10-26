@@ -35,7 +35,7 @@ fun HomeScreen(session: DemoSession, answerCount: Int, telegram: ConnectionStatu
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Box(
-                        Modifier.size(56.dp).background(if (session.running) AppSurfaceAlt else AppWhite, CircleShape).clickable(onClick = onToggle),
+                        Modifier.size(56.dp).background(if (session.running) AppSurfaceAlt else AppWhite, CircleShape).clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onToggle),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(Icons.Outlined.PowerSettingsNew, contentDescription = if (session.running) "Остановить бота" else "Запустить бота", tint = if (session.running) AppWhite else AppBlack, modifier = Modifier.size(28.dp))

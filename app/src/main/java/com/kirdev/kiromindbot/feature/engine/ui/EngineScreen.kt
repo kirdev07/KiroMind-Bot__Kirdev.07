@@ -45,11 +45,9 @@ fun EngineScreen(count: Int, contextEnabled: Boolean, aiStatus: String, onContex
         }
         Label("Поведение")
         Panel {
-            SettingRow("Контекст диалога", "Помнит 10 последних реплик, 30 минут") {
-                Switch(checked = contextEnabled, onCheckedChange = onContextChanged)
-            }
+            SwitchRow("Контекст диалога", "Помнит 10 последних реплик, 30 минут", contextEnabled, onCheckedChange = onContextChanged)
             DividerLine()
-            SettingRow("Характер", "Выбирается в тестовом чате: обычный, дружелюбный, вежливый, дерзкий, авто")
+            SettingRow("Характер", "Выбирается в Настройках → Диалоги")
         }
         Label("Внешний ИИ")
         Panel {
@@ -147,12 +145,11 @@ fun ProviderScreen(
         Panel {
             SettingRow("Ключ ${kind.title}", if (hasKey) "Сохранён в зашифрованном виде" else "Не задан")
             DividerLine()
-            SettingRow("Отвечать через ${kind.title}", if (hasKey) "Когда MindCore не нашёл ответа" else "Сначала сохраните ключ") {
-                Switch(checked = settings.externalAiEnabled && hasKey, enabled = hasKey, onCheckedChange = { onChange(settings.copy(externalAiEnabled = it)) })
-            }
+            SwitchRow("Отвечать через ${kind.title}", if (hasKey) "Когда MindCore не нашёл ответа" else "Сначала сохраните ключ",
+                settings.externalAiEnabled && hasKey, enabled = hasKey) { onChange(settings.copy(externalAiEnabled = it)) }
             DividerLine()
-            SettingRow("Передавать контекст", "Последние 5 реплик собеседника вместе с вопросом") {
-                Switch(checked = settings.shareContextWithAi, onCheckedChange = { onChange(settings.copy(shareContextWithAi = it)) })
+            SwitchRow("Передавать контекст", "Последние 5 реплик собеседника вместе с вопросом", settings.shareContextWithAi) {
+                onChange(settings.copy(shareContextWithAi = it))
             }
             DividerLine()
             SettingRow("Сегодня", "Запросов: $usedToday из ${settings.aiDailyLimit} · не больше 20 в минуту")
