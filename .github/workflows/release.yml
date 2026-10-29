@@ -84,7 +84,13 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
+        # A re-pushed tag of an existing release replaces its files and keeps the description.
         run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" --clobber \
+              "${{ steps.apk.outputs.name }}" "${{ steps.apk.outputs.name }}.sha256"
+            exit 0
+          fi
           gh release create "$GITHUB_REF_NAME" \
             "${{ steps.apk.outputs.name }}" "${{ steps.apk.outputs.name }}.sha256" \
             --title "KiroMind Bot ${{ steps.v.outputs.version }}" \
